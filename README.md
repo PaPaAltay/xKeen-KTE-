@@ -24,4 +24,4 @@
 Для установки или обновления просто введите одну команду в терминале SSH вашего Keenetic:
 
 ```bash
-curl -sL [https://raw.githubusercontent.com/ВАШ_НИК/xkeen/main/install.sh](https://raw.githubusercontent.com/ВАШ_НИК/xkeen/main/install.sh) | sh
+curl -sL [https://raw.githubusercontent.com/PaPaAltay/xkeen/main/install.sh](https://raw.githubusercontent.com/PaPaAltay/xkeen/main/install.sh) | sh
