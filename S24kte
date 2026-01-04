@@ -1,0 +1,7 @@
+#!/bin/sh
+. /opt/lib/xkeen/modules/network.sh
+case "\$1" in
+    start) setup_rules; /opt/etc/init.d/S24sing-box start ;;
+    stop) flush_rules; /opt/etc/init.d/S24sing-box stop ;;
+    restart) \$0 stop; sleep 1; \$0 start ;;
+esac

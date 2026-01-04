@@ -1,0 +1,40 @@
+#!/bin/sh
+. /opt/lib/xkeen/modules/singbox_gen.sh
+. /opt/lib/xkeen/modules/network.sh
+. /opt/lib/xkeen/modules/diag.sh
+
+USER="YOUR_GITHUB_USERNAME"
+REPO="xkeen"
+LOCAL_VER=$(cat /opt/lib/xkeen/version)
+
+check_updates() {
+    REMOTE_VER=$(curl -sL --connect-timeout 2 "https://raw.githubusercontent.com/\$USER/\$REPO/main/version" | tr -d '\r\n')
+    [ -n "\$REMOTE_VER" ] && [ "\$REMOTE_VER" != "\$LOCAL_VER" ] && \
+    UPDATE_BANNER="\e[1;5;31m[ ОБНОВЛЕНИЕ ДО v\$REMOTE_VER ДОСТУПНО! ]\e[0m" || \
+    UPDATE_BANNER="\e[32m[v\$LOCAL_VER]\e[0m"
+}
+
+check_updates
+while true; do
+    clear
+    RUN=\$(pgrep sing-box >/dev/null && echo -e "\e[32mONLINE\e[0m" || echo -e "\e[31mOFFLINE\e[0m")
+    echo -e "\e[1m[ Keenetic Traffic Engine ]\e[0m \$UPDATE_BANNER"
+    echo "------------------------------------------"
+    echo "1) ПЕРЕЗАПУСК    6) ОБНОВИТЬ"
+    echo "2) СТОП          7) РЕБУТ"
+    echo "3) ИМПОРТ        8) ДИАГНОСТИКА"
+    echo "4) ТРАНСПОРТ     9) ЛОГИ"
+    echo "5) ПОРТЫ         0) ВЫХОД"
+    echo "------------------------------------------"
+    read -p "Выбор: " c
+    case \$c in
+        1) /opt/etc/init.d/S24kte restart; sleep 2 ;;
+        2) /opt/etc/init.d/S24kte stop; sleep 2 ;;
+        3) read -p "Key: " k; parse_and_gen "\$k"; sleep 1 ;;
+        6) curl -sL "https://raw.githubusercontent.com/\$USER/\$REPO/main/install.sh" | sh; exec xkeen ;;
+        7) read -p "Reboot? (y/n): " ch; [ "\$ch" = "y" ] && reboot ;;
+        8) run_deep_diag ;;
+        9) tail -n 50 /opt/var/log/sing-box.log; read -p "Enter..." _ ;;
+        0) exit 0 ;;
+    esac
+done
